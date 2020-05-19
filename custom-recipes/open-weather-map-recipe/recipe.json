@@ -1,0 +1,123 @@
+{
+    "meta": {
+        "label": "OpenWeatherMap weather mapping",
+        "description": "Add many weather information to your dataset."
+    },
+    "kind": "PYTHON",
+    "inputRoles": [
+        {
+            "name": "input_dataset",
+            "label": "Input dataset",
+            "description": "Dataset containing dates and geopoints.",
+            "arity": "UNARY",
+            "required": true,
+            "acceptsDataset": true,
+            "acceptsFolder": false
+        }
+    ],
+
+    "outputRoles": [
+        {
+            "name": "output_dataset",
+            "label": "Output dataset with weather added",
+            "description": "Dataset containing weather data from OpenWeatherMap API.",
+            "arity": "UNARY",
+            "required": true,
+            "acceptsDataset": true
+        }
+    ],
+    "params": [
+        {
+            "name": "preset_config",
+            "label": "OpenWeatherMap Preset",
+            "type": "PRESET",
+            "parameterSetId": "open-weather-map-config"
+        },
+        {
+            "name": "latitude_column",
+            "label": "Latitude column",
+            "type": "COLUMN",
+            "columnRole": "input_dataset",
+            "mandatory": true
+        },
+        {
+            "name": "longitude_column",
+            "label": "Longitude column",
+            "type": "COLUMN",
+            "columnRole": "input_dataset",
+            "mandatory": true
+        },
+        {
+            "name": "date_column",
+            "label": "Date column",
+            "type": "COLUMN",
+            "columnRole": "input_dataset",
+            "allowedColumnTypes": ["date"],
+            "mandatory": true
+        },
+        {
+            "name": "advanced_mode",
+            "type": "BOOLEAN",
+            "label" : "Advanced mode",
+            "defaultValue" : false
+        },
+        {
+            "name": "units",
+            "label": "System of units",
+            "type": "SELECT",
+            "defaultValue": "default",
+            "selectChoices": [
+                {
+                    "value": "default",
+                    "label": "Default (Configured in Preset)"
+                },
+                {
+                    "value": "standard",
+                    "label": "Standard (Temperature in Kelvin, speed in meter/second, Pressure in hPa)"
+                },
+                {
+                    "value": "metric",
+                    "label": "Metric (Temperature in Celsius, speed in meter/second), Pressure in hPa"
+                },
+                {
+                    "value": "imperial",
+                    "label": "Imperial (Temperature in Fahrenheit, speed in mile/hour), Pressure in hPa"
+                }
+            ],
+            "visibilityCondition" : "model.advanced_mode"
+        },
+        {
+            "name": "lang",
+            "label": "Language",
+            "type": "SELECT",
+            "defaultValue": "default",
+            "selectChoices": [
+                {
+                    "value": "default",
+                    "label": "Default (Configured in Preset)"
+                },
+                {
+                    "value": "en",
+                    "label": "English"
+                },
+                {
+                    "value": "fr",
+                    "label": "French"
+                },
+                {
+                    "value": "de",
+                    "label": "German"
+                }
+            ],
+            "visibilityCondition" : "model.advanced_mode"
+        },
+        {
+            "name": "cache_enabled",
+            "type": "BOOLEAN",
+            "label" : "Use cache",
+            "defaultValue": true,
+            "visibilityCondition" : "model.advanced_mode"
+        }
+    ]
+
+}

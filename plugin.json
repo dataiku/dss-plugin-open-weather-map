@@ -1,0 +1,73 @@
+{
+    "id": "open-weather-map",
+    "version": "0.0.1",
+    "meta": {
+        "label": "OpenWeatherMap - Historical & Forecast weather",
+        "description": "Fetch historical and forecast data from OpenWeatherMap API",
+        "author": "Dataiku (Henri Chabert)",
+        "icon": "icon-cloud",
+        "tags": ["Weather", "Geospatial"],
+        "url": "https://www.dataiku.com/dss/plugins/info/open-weather-map.html",
+        "licenseInfo": "Apache Software License"
+    },
+    "params": [
+        {
+            "name": "cache_location",
+            "type": "SELECT",
+            "label": "Cache location",
+            "selectChoices": [
+            {
+                "value": "original",
+                "label": "Dataiku Data Directory"
+            },
+            {
+                "value": "custom",
+                "label": "Custom"
+            }
+            ],
+            "defaultValue": "original"
+        },
+        {
+            "name": "cache_location_custom",
+            "type": "STRING",
+            "label": "Custom cache location",
+            "description": "Absolute path",
+            "visibilityCondition": "model.cache_location == 'custom'"
+        },
+        {
+            "name": "sep_fw",
+            "type": "SEPARATOR",
+            "label": "OpenWeatherMap Cache"
+        },
+        {
+            "name": "cache_size",
+            "type": "INT",
+            "label": "Cache size",
+            "description": "in megabytes",
+            "defaultValue": 1000
+        },
+        {
+            "name": "cache_policy",
+            "label": "Eviction policy",
+            "type": "SELECT",
+            "selectChoices": [
+            {
+                "value": "least-recently-stored",
+                "label": "Least Recently Stored"
+            },
+            {
+                "value": "least-recently-used",
+                "label": "Least Recently Used"
+            },
+            {
+                "value": "least-frequently-used",
+                "label": "Least Frequently Used"
+            },
+            {
+                "value": "none",
+                "label": "None"
+            }],
+            "defaultValue": "least-recently-stored"
+        }
+    ]
+}

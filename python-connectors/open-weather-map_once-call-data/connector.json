@@ -1,0 +1,110 @@
+{
+    "meta" : {
+        "label": "Free licence - OpenWeatherData Historical & Forecast data",
+        "description": "Get historical and forecast weather data from anywhere around the world. Forecast limited to 7 days forward and Historical data to 5 days back."
+    },
+    "readable": true,
+    "writable": false,
+    "params": [
+        {
+            "name": "preset_config",
+            "label": "OpenWeatherMap Preset",
+            "type": "PRESET",
+            "parameterSetId": "open-weather-map-config"
+        },
+        {
+            "name": "latitude",
+            "label": "Latitude of the target location",
+            "type": "DOUBLE",
+            "description": "",
+            "mandatory": true
+        },
+        {
+            "name": "longitude",
+            "label": "Longitude of the target location",
+            "type": "DOUBLE",
+            "description": "",
+            "mandatory": true
+        },
+        {
+            "name": "data_type",
+            "label": "Data type",
+            "type": "SELECT",
+            "defaultValue": "historical",
+            "selectChoices": [
+                {
+                    "value": "historical",
+                    "label": "Historical"
+                },
+                {
+                    "value": "forecast",
+                    "label": "Forecast"
+                }
+            ]
+        },
+        {
+            "name": "granularity",
+            "label": "Granularity",
+            "type": "SELECT",
+            "defaultValue": "daily",
+            "selectChoices": [
+                {
+                    "value": "hourly",
+                    "label": "Hourly"
+                },
+                {
+                    "value": "daily",
+                    "label": "Daily"
+                }
+            ]
+        },
+        {
+            "name": "units",
+            "label": "System of units",
+            "type": "SELECT",
+            "defaultValue": "default",
+            "selectChoices": [
+                {
+                    "value": "default",
+                    "label": "Default (Configured in Preset)"
+                },
+                {
+                    "value": "standard",
+                    "label": "Standard (Temperature in Kelvin, speed in meter/second, Pressure in hPa)"
+                },
+                {
+                    "value": "metric",
+                    "label": "Metric (Temperature in Celsius, speed in meter/second), Pressure in hPa"
+                },
+                {
+                    "value": "imperial",
+                    "label": "Imperial (Temperature in Fahrenheit, speed in mile/hour), Pressure in hPa"
+                }
+            ]
+        },
+        {
+            "name": "lang",
+            "label": "Language",
+            "type": "SELECT",
+            "defaultValue": "default",
+            "selectChoices": [
+                {
+                    "value": "default",
+                    "label": "Default (Configured in Preset)"
+                },
+                {
+                    "value": "en",
+                    "label": "English"
+                },
+                {
+                    "value": "fr",
+                    "label": "French"
+                },
+                {
+                    "value": "de",
+                    "label": "German"
+                }
+            ]
+        }
+    ]
+}

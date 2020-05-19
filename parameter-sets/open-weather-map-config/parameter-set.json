@@ -1,0 +1,60 @@
+{
+    "meta" : {
+        "label": "Parameter set open-weather-map-config",
+        "description": ""
+    },
+    "defaultDefinableInline": true,
+    "defaultDefinableAtProjectLevel": true,
+    "pluginParams": [
+        {
+            "name": "api_key",
+            "label": "OpenWeatherMap API key",
+            "type": "STRING",
+            "description": "To get a key, go to https://openweathermap.org/.",
+            "mandatory": true
+        }
+    ],
+
+    "params": [
+        {
+            "name": "units",
+            "label": "System of units",
+            "type": "SELECT",
+            "defaultValue": "standard",
+            "selectChoices": [
+                {
+                    "value": "standard",
+                    "label": "Standard (Temperature in Kelvin, speed in meter/second, Pressure in hPa)"
+                },
+                {
+                    "value": "metric",
+                    "label": "Metric (Temperature in Celsius, speed in meter/second), Pressure in hPa"
+                },
+                {
+                    "value": "imperial",
+                    "label": "Imperial (Temperature in Fahrenheit, speed in mile/hour), Pressure in hPa"
+                }
+            ]
+        },
+        {
+            "name": "lang",
+            "label": "Language",
+            "type": "SELECT",
+            "defaultValue": "en",
+            "selectChoices": [
+                {
+                    "value": "en",
+                    "label": "English"
+                },
+                {
+                    "value": "fr",
+                    "label": "French"
+                },
+                {
+                    "value": "de",
+                    "label": "German"
+                }
+            ]
+        }
+    ]
+}
