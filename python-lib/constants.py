@@ -9,10 +9,6 @@ COL_TYPES = {
         'wind_speed': 'float',
         'wind_gust': 'float',
         'wind_deg': 'float',
-        'weather.id': 'int',
-        'weather.main': 'string',
-        'weather.description': 'string',
-        'weather.icon': 'string',
         'output_geopoint': 'string',
         'error': 'string'
     },

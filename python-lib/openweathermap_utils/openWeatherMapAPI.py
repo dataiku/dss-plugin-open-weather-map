@@ -1,5 +1,6 @@
 import requests
 import logging
+from itertools import chain
 from openweathermap_utils.utils import *
 from constants import COL_TYPES
 
@@ -70,13 +71,12 @@ class OpenWeatherMapAPI:
 
     @requests_error_handler
     def _find_date_in_weather_list(self, weather_list, date, granularity, data_type):
-        for d in weather_list:
-            if not d:
-                break
-            comp = lambda x: round_time(x, timedelta(days=1) if granularity == 'daily' else timedelta(hours=1))
-            d_dt = datetime_to_timestamp(comp(timestamp_to_datetime(d['dt'])))
-            if d_dt == datetime_to_timestamp(comp(date)):
-                return [d]
+        for weather_item in weather_list:
+            if not weather_item: break
+            dt_floorer = lambda x: floor_time(x, 'day' if granularity == 'daily' else 'hour')
+            owm_dt = datetime_to_timestamp(dt_floorer(timestamp_to_datetime(weather_item['dt'])))
+            if owm_dt == datetime_to_timestamp(dt_floorer(date)):
+                return [weather_item]
         raise OpenWeatherMapAPIError(
             status_code=400,
             text='{{"cod":"404", "message":"{} weather for date {} not found"}}'.format(
@@ -85,6 +85,16 @@ class OpenWeatherMapAPI:
             ))
 
     def _retrieve_columns(self, data_type, granularity):
+        if data_type == 'all':
+            historical_columns = dict(
+                self.available_columns['historical']['all'], **self.available_columns['historical'][granularity]
+            )
+            forecast_columns = dict(
+                self.available_columns['forecast']['all'], **self.available_columns['forecast'][granularity]
+            )
+            return dict(self.available_columns['all'], **dict(
+                historical_columns, **forecast_columns
+            ))
         return dict(self.available_columns['all'], **dict(
                 self.available_columns[data_type]['all'], **self.available_columns[data_type][granularity]
         ))
@@ -115,17 +125,23 @@ class OpenWeatherMapAPI:
         return (self._format_output(d, lat, lon, 'forecast', granularity, error.text) for d in weather_data)
 
     def get_historical_weather_data_gen(self, lat, lon, granularity, limit_days=5, **kwargs):
-
-        today = datetime.today()
+        today = floor_time(datetime.today(), 'day').replace(hour=12)
         days_before = 1
         while days_before <= limit_days:
             date = today - timedelta(days=days_before)
             weather_data, error = self._get_historical_weather_data(lat, lon, date, granularity, **kwargs)
-            if error.status_code == 400:
-                break
+            if error.status_code == 400: break
             for d in weather_data:
                 yield self._format_output(d, lat, lon, 'historical', granularity, error.text)
             days_before += 1
+
+    def get_weather_data_gen(self, lat, lon, granularity, data_type, **kwargs):
+        gens = []
+        if data_type in ('historical', 'all'):
+            gens.append(self.get_historical_weather_data_gen(lat, lon, granularity, **kwargs))
+        if data_type in ('forecast', 'all'):
+            gens.append(self.get_forecast_weather_data_gen(lat, lon, granularity, **kwargs))
+        return chain(*gens)
 
     def retrieve_schema(self, data_type, granularity):
         return {'columns': [{'name': k, 'type': v} for k, v in self._retrieve_columns(data_type, granularity).items()]}

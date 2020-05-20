@@ -12,7 +12,7 @@ def get_configs():
     preset_configs = recipe_configs.get('preset_config')
 
     configs['input_dataset'], configs['output_dataset'] = get_input_output()
-    configs['api_key'] = plugin_configs.get('preset_config').get('api_key')
+    configs['api_key'] = preset_configs.get('api_key')
 
     configs['date_column_name'] = recipe_configs.get('date_column')
     configs['latitude_column_name'] = recipe_configs.get('latitude_column')

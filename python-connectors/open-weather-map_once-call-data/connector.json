@@ -27,22 +27,6 @@
             "mandatory": true
         },
         {
-            "name": "data_type",
-            "label": "Data type",
-            "type": "SELECT",
-            "defaultValue": "historical",
-            "selectChoices": [
-                {
-                    "value": "historical",
-                    "label": "Historical"
-                },
-                {
-                    "value": "forecast",
-                    "label": "Forecast"
-                }
-            ]
-        },
-        {
             "name": "granularity",
             "label": "Granularity",
             "type": "SELECT",
@@ -57,6 +41,33 @@
                     "label": "Daily"
                 }
             ]
+        },
+        {
+            "name": "advanced_mode",
+            "type": "BOOLEAN",
+            "label" : "Advanced mode",
+            "defaultValue" : false
+        },
+        {
+            "name": "data_type",
+            "label": "Data type",
+            "type": "SELECT",
+            "defaultValue": "all",
+            "selectChoices": [
+                {
+                    "value": "all",
+                    "label": "Historical & Forecast"
+                },
+                {
+                    "value": "historical",
+                    "label": "Historical"
+                },
+                {
+                    "value": "forecast",
+                    "label": "Forecast"
+                }
+            ],
+            "visibilityCondition" : "model.advanced_mode"
         },
         {
             "name": "units",
@@ -80,7 +91,8 @@
                     "value": "imperial",
                     "label": "Imperial (Temperature in Fahrenheit, speed in mile/hour), Pressure in hPa"
                 }
-            ]
+            ],
+            "visibilityCondition" : "model.advanced_mode"
         },
         {
             "name": "lang",
@@ -104,7 +116,15 @@
                     "value": "de",
                     "label": "German"
                 }
-            ]
+            ],
+            "visibilityCondition" : "model.advanced_mode"
+        },
+        {
+            "name": "cache_enabled",
+            "type": "BOOLEAN",
+            "label" : "Use cache",
+            "defaultValue": true,
+            "visibilityCondition" : "model.advanced_mode && model.data_type != 'forecast'"
         }
     ]
 }

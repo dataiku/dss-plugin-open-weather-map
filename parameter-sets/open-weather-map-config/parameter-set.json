@@ -6,16 +6,15 @@
     "defaultDefinableInline": true,
     "defaultDefinableAtProjectLevel": true,
     "pluginParams": [
+    ],
+    "params": [
         {
             "name": "api_key",
             "label": "OpenWeatherMap API key",
             "type": "STRING",
             "description": "To get a key, go to https://openweathermap.org/.",
             "mandatory": true
-        }
-    ],
-
-    "params": [
+        },
         {
             "name": "units",
             "label": "System of units",

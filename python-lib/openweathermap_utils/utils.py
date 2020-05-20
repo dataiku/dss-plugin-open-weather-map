@@ -15,8 +15,16 @@ def round_time(dt=None, dateDelta=timedelta(minutes=1)):
     return dt + timedelta(0, rounding - seconds, -dt.microsecond)
 
 
+def floor_time(dt=None, round_to='day'):
+    datetime_els = ['year', 'month', 'day', 'hour', 'minute', 'second', 'microsecond']
+    if not round_to in datetime_els:
+        raise KeyError(f'Error in flooring dt: You have to choose a value between these: {datetime_els}')
+    rt_index = datetime_els.index(round_to)
+    return dt.replace(**{k: 0 if rt_index+i > 1 else 1 for i, k in enumerate(datetime_els[rt_index+1:])})
+
+
 def datetime_to_timestamp(dt):
-    return int(dt.replace(tzinfo=timezone.utc).timestamp())
+    return int(dt.timestamp())
 
 
 def timestamp_to_datetime(ts):
