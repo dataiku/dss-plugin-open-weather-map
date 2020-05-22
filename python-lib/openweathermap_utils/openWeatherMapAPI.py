@@ -44,7 +44,7 @@ class OpenWeatherMapAPI:
         columns = self._retrieve_columns(data_type, granularity)
         formatted_output = dict(
             output,
-            output_geopoint='POINT({} {})'.format(str(lat), str(lon)),
+            output_geopoint='POINT({} {})'.format(str(lon), str(lat)),
             data_type=data_type.capitalize(),
             error=error_msg)
         formatted_output = flatten_dict(formatted_output)

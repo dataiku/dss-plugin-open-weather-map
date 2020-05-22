@@ -27,7 +27,7 @@ class OpenWeatherMapConnector(Connector):
 
         self.cache_enabled = self.config.get("cache_enabled")
         self.cache_size = self.plugin_config.get('cache_size', 1000) * 1000
-        self.cache_policy = str(self.plugin_config.get("cache_policy"))
+        self.cache_policdailyy = str(self.plugin_config.get("cache_policy"))
 
         with CacheHandler(cache_location, enabled=self.cache_enabled,
                           size_limit=self.cache_size, eviction_policy=self.cache_policy) as cache:
