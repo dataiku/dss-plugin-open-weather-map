@@ -1,6 +1,6 @@
 {
     "meta" : {
-        "label": "OpenWeatherData Historical & Forecast",
+        "label": "Weather generating",
         "description": "Get historical and forecast weather data from anywhere around the world. Forecast limited to 7 days forward and Historical data to 5 days back."
     },
     "readable": true,

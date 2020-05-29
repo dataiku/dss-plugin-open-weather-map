@@ -1,7 +1,7 @@
 {
     "meta": {
-        "label": "OpenWeatherMap weather mapping",
-        "description": "Add many weather information to your dataset."
+        "label": "Weather mapping",
+        "description": "Add many weather information to a dataset with lat/lon and date columns."
     },
     "kind": "PYTHON",
     "inputRoles": [
@@ -19,8 +19,8 @@
     "outputRoles": [
         {
             "name": "output_dataset",
-            "label": "Output dataset with weather added",
-            "description": "Dataset containing weather data from OpenWeatherMap API.",
+            "label": "Output dataset",
+            "description": "Dataset with weather data from OpenWeatherMap API added.",
             "arity": "UNARY",
             "required": true,
             "acceptsDataset": true
@@ -112,7 +112,7 @@
             "visibilityCondition" : "model.advanced_mode"
         },
         {
-            "name": "cache_enabled",
+            "name": "cache_enabled (If cache allowed in plugin settings)",
             "type": "BOOLEAN",
             "label" : "Use cache",
             "defaultValue": true,

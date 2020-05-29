@@ -1,7 +1,11 @@
 import requests
 import logging
 from itertools import chain
-from openweathermap_utils.utils import *
+import os
+from openweathermap_utils.utils import (datetime_to_timestamp, flatten_dict, cast_field, requests_error_handler,
+                                        floor_time, timestamp_to_datetime, datetime_to_str)
+from datetime import datetime, timedelta
+from exceptions import OpenWeatherMapAPIError
 from constants import COL_TYPES
 
 logger = logging.getLogger(__name__)
@@ -46,6 +50,7 @@ class OpenWeatherMapAPI:
             output,
             output_geopoint='POINT({} {})'.format(str(lon), str(lat)),
             data_type=data_type.capitalize(),
+            granularity=granularity.capitalize(),
             error=error_msg)
         formatted_output = flatten_dict(formatted_output)
         formatted_output = {k: cast_field(v, columns.get(k, 'string')) for k, v in formatted_output.items()}

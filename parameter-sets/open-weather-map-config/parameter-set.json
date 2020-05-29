@@ -1,7 +1,7 @@
 {
     "meta" : {
-        "label": "Parameter set open-weather-map-config",
-        "description": ""
+        "label": "OpenWeatherMap API configuration",
+        "description": "In this preset, you can setup you preferences and the used API key."
     },
     "defaultDefinableInline": true,
     "defaultDefinableAtProjectLevel": true,

@@ -61,3 +61,5 @@ COL_TYPES = {
         },
     },
 }
+
+CACHE_RELATIVE_DIR = '.cache/dss/plugins/open_weather_map'

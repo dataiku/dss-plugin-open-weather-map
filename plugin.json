@@ -2,8 +2,8 @@
     "id": "open-weather-map",
     "version": "0.0.1",
     "meta": {
-        "label": "OpenWeatherMap - Historical & Forecast weather",
-        "description": "Fetch historical and forecast data from OpenWeatherMap API",
+        "label": "OpenWeatherMap",
+        "description": "Retrieve historical and forecast data from OpenWeatherMap API",
         "author": "Dataiku (Henri Chabert)",
         "icon": "icon-cloud",
         "tags": ["Weather", "Geospatial"],
@@ -18,11 +18,15 @@
             "selectChoices": [
             {
                 "value": "original",
-                "label": "Dataiku Data Directory"
+                "label": "User $HOME directory"
             },
             {
                 "value": "custom",
                 "label": "Custom"
+            },
+            {
+                "value": "none",
+                "label": "None"
             }
             ],
             "defaultValue": "original"
@@ -37,18 +41,21 @@
         {
             "name": "sep_fw",
             "type": "SEPARATOR",
-            "label": "OpenWeatherMap Cache"
+            "label": "OpenWeatherMap Cache",
+            "visibilityCondition": "model.cache_location != 'none'"
         },
         {
             "name": "cache_size",
             "type": "INT",
             "label": "Cache size",
             "description": "in megabytes",
-            "defaultValue": 1000
+            "defaultValue": 1000,
+                "visibilityCondition": "model.cache_location != 'none'"
         },
         {
             "name": "cache_policy",
             "label": "Eviction policy",
+            "description": "The way you want data to be evicted once the cache size is reached",
             "type": "SELECT",
             "selectChoices": [
             {
@@ -65,9 +72,10 @@
             },
             {
                 "value": "none",
-                "label": "None"
+                "label": "No Eviction"
             }],
-            "defaultValue": "least-recently-stored"
+            "defaultValue": "least-recently-stored",
+            "visibilityCondition": "model.cache_location != 'none'"
         }
     ]
 }

@@ -4,6 +4,8 @@ import dataiku
 import pandas as pd
 from exceptions import OpenWeatherMapAPIError
 from requests import HTTPError
+import pwd
+from constants import CACHE_RELATIVE_DIR
 
 
 def round_time(dt=None, dateDelta=timedelta(minutes=1)):
@@ -20,7 +22,7 @@ def floor_time(dt=None, round_to='day'):
     if not round_to in datetime_els:
         raise KeyError(f'Error in flooring dt: You have to choose a value between these: {datetime_els}')
     rt_index = datetime_els.index(round_to)
-    return dt.replace(**{k: 0 if rt_index+i > 1 else 1 for i, k in enumerate(datetime_els[rt_index+1:])})
+    return dt.replace(**{k: 0 if rt_index + i > 1 else 1 for i, k in enumerate(datetime_els[rt_index + 1:])})
 
 
 def datetime_to_timestamp(dt):
@@ -63,10 +65,10 @@ def flatten_dict_rec(el, names, new_dict):
         new_dict['.'.join(names)] = ''
     if isinstance(el, dict):
         for k, v in el.items():
-            flatten_dict_rec(v, names+[str(k)], new_dict)
+            flatten_dict_rec(v, names + [str(k)], new_dict)
     elif isinstance(el, list):
         for i, e in enumerate(el):
-            flatten_dict_rec(e, names+[str(i)], new_dict)
+            flatten_dict_rec(e, names + [str(i)], new_dict)
     else:
         new_dict['.'.join(names)] = el
 
@@ -75,6 +77,19 @@ def flatten_dict(d):
     new_dict = {}
     flatten_dict_rec(d, [], new_dict)
     return new_dict
+
+
+def get_cache_location_from_configs(cache_location, default):
+    home_dir = pwd.getpwuid(os.getuid()).pw_dir
+    # Only solution to get user $HOME directory (getpass.getuser()
+    # doesn't work). We cannot write in the data_dir because of
+    # the implementation of MUS instances where permission problems
+    # could happen.
+    if cache_location == 'original':
+        return os.path.join(home_dir, CACHE_RELATIVE_DIR)
+    elif cache_location == 'none':
+        return ''
+    return default
 
 
 def requests_error_handler(function):
@@ -95,6 +110,7 @@ def requests_error_handler(function):
             return [{}], owm_error
         except Exception as err:
             raise err
+
     return wrapper
 
 
@@ -107,6 +123,7 @@ def debug_func(function):
             print(locals())
             print('##################################################################################################')
             raise err
+
     return wrapper
 
 

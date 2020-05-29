@@ -1,6 +1,6 @@
 from dataiku.connector import Connector
 from openweathermap_utils import OpenWeatherMapAPI, CacheHandler
-import os
+from openweathermap_utils.utils import get_cache_location_from_configs
 
 
 class OpenWeatherMapConnector(Connector):
@@ -10,7 +10,18 @@ class OpenWeatherMapConnector(Connector):
 
         preset_config = self.config.get("preset_config")
 
+        self.cache_location = get_cache_location_from_configs(
+            cache_location=self.plugin_config.get('cache_location'),
+            default=self.plugin_config.get('cache_location_custom', '')
+        )
+
+        self.cache_size = self.plugin_config.get('cache_size', 1000) * 1000
+        self.cache_policy = str(self.plugin_config.get("cache_policy"))
+
         self.api_key = str(preset_config.get("api_key"))
+
+        if self.api_key == 'None':
+            raise ValueError("An OpenWeatherMap API key in mandatory to use the plugin. Please set one in a preset.")
         self.latitude = str(self.config.get("latitude"))
         self.longitude = str(self.config.get("longitude"))
         self.granularity = str(self.config.get("granularity"))
@@ -18,18 +29,9 @@ class OpenWeatherMapConnector(Connector):
         self.data_type = str(self.config.get("data_type"))
         self.units = preset_config.get("units") if self.config.get("units") == 'default' else self.config.get("units")
         self.lang = preset_config.get("lang") if self.config.get("lang") == 'default' else self.config.get("lang")
+        self.cache_enabled = self.config.get("cache_enabled") and self.cache_location
 
-        cache_location = self.plugin_config.get('cache_location')
-        if cache_location == 'original':
-            self.cache_location = os.environ["DIP_HOME"] + f'/caches/plugins/openweathermap'
-        else:
-            self.cache_location = self.plugin_config.get('cache_location_custom', '')
-
-        self.cache_enabled = self.config.get("cache_enabled")
-        self.cache_size = self.plugin_config.get('cache_size', 1000) * 1000
-        self.cache_policdailyy = str(self.plugin_config.get("cache_policy"))
-
-        with CacheHandler(cache_location, enabled=self.cache_enabled,
+        with CacheHandler(self.cache_location, enabled=self.cache_enabled,
                           size_limit=self.cache_size, eviction_policy=self.cache_policy) as cache:
             self.weather_api = OpenWeatherMapAPI(self.api_key, cache)
 
