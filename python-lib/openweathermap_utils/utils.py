@@ -8,16 +8,13 @@ import pwd
 from constants import CACHE_RELATIVE_DIR
 
 
-def round_time(dt=None, dateDelta=timedelta(minutes=1)):
-    round_to = dateDelta.total_seconds()
-    if not dt:
-        dt = datetime.now()
-    seconds = (dt - dt.min).seconds
-    rounding = (seconds + round_to / 2) // round_to * round_to
-    return dt + timedelta(0, rounding - seconds, -dt.microsecond)
-
-
 def floor_time(dt=None, round_to='day'):
+    """
+    Floors the time to closest previous "round_to". If round_to = 'day', it return the day without time information
+    :param dt: Input datetime to floor
+    :param round_to: Granularity you want to floor on (day, hour, minute...)
+    :return: New time floored
+    """
     datetime_els = ['year', 'month', 'day', 'hour', 'minute', 'second', 'microsecond']
     if not round_to in datetime_els:
         raise KeyError(f'Error in flooring dt: You have to choose a value between these: {datetime_els}')
@@ -93,6 +90,11 @@ def get_cache_location_from_configs(cache_location, default):
 
 
 def requests_error_handler(function):
+    """
+    Raises an exception or ignore it according to the type of error.
+    :param function: Function decorated
+    :return: (data, error) if error ignore else raises an Exception. If there is no error, the second argument is empty
+    """
     def wrapper(*args, **kwargs):
         try:
             res = function(*args, **kwargs)

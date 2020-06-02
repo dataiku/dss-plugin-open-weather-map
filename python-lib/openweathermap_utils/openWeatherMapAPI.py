@@ -21,6 +21,12 @@ class OpenWeatherMapAPI:
         self.api_calls_nb = 0
 
     def _get_query(self, endpoint, params):
+        """
+        Realises an HTTP GET query on the endpoint using Requests library.
+        :param endpoint: Endpoint to query
+        :param params: Querystring parameters
+        :return: Response body as a dict if successful else raise an exception
+        """
         params['appid'] = self.api_key
         url = os.path.join(self.base_url, endpoint)
         r = requests.get(url, params=params)
@@ -33,6 +39,14 @@ class OpenWeatherMapAPI:
         return r.json()
 
     def _one_call(self, lat, lon, date=None, **kwargs):
+        """
+        Queries OneCall service of OpenWeatherMap API
+        :param lat: Latitude of the location you want the weather of
+        :param lon: Longitude of the location you want the weather of
+        :param date: Date you want the weather of
+        :param kwargs: Other params to pass to _get_query()
+        :return: Weather data of desired location for the desired date
+        """
         endpoint = 'onecall'
         params = {
             'lat': lat,
@@ -45,7 +59,17 @@ class OpenWeatherMapAPI:
         return self._get_query(endpoint, dict(params, **kwargs))
 
     def _format_output(self, output, lat, lon, data_type, granularity, error_msg=''):
-        columns = self._retrieve_columns(data_type, granularity)
+        """
+        Format the data before sending them to a dataset
+        :param output: The data before formatting (as a dict)
+        :param lat: Latitude of the location
+        :param lon: Longitude of the location
+        :param data_type: Whether to format for historical or forecast data
+        :param granularity: Desired granularity between 'hourly' and 'daily'
+        :param error_msg: If there have been an error in the retrieval, write here the error message
+        :return: The output formatted as wanted
+        """
+        columns = self._retrieve_columns_type(data_type, granularity)
         formatted_output = dict(
             output,
             output_geopoint='POINT({} {})'.format(str(lon), str(lat)),
@@ -76,6 +100,14 @@ class OpenWeatherMapAPI:
 
     @requests_error_handler
     def _find_date_in_weather_list(self, weather_list, date, granularity, data_type):
+        """
+        From a list of dicts, find the weather as close as possible fron the desired date
+        :param weather_list: List of dicts. Each dicts represents weather for a specific day or hour
+        :param date: The date you want to match the weather on
+        :param granularity: 'hourly' or 'daily'
+        :param data_type: 'historical'or 'forecast'
+        :return: The dict corresponding to the closest date
+        """
         for weather_item in weather_list:
             if not weather_item: break
             dt_floorer = lambda x: floor_time(x, 'day' if granularity == 'daily' else 'hour')
@@ -89,7 +121,10 @@ class OpenWeatherMapAPI:
                 datetime_to_str(date, self.datetime_schema)
             ))
 
-    def _retrieve_columns(self, data_type, granularity):
+    def _retrieve_columns_type(self, data_type, granularity):
+        """
+        Get the schema of the output dataset according to the data_type and granularity
+        """
         if data_type == 'all':
             historical_columns = dict(
                 self.available_columns['historical']['all'], **self.available_columns['historical'][granularity]
@@ -149,4 +184,4 @@ class OpenWeatherMapAPI:
         return chain(*gens)
 
     def retrieve_schema(self, data_type, granularity):
-        return {'columns': [{'name': k, 'type': v} for k, v in self._retrieve_columns(data_type, granularity).items()]}
+        return {'columns': [{'name': k, 'type': v} for k, v in self._retrieve_columns_type(data_type, granularity).items()]}
