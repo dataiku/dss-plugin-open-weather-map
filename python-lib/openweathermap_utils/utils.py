@@ -1,11 +1,14 @@
+import logging
 from datetime import datetime, timedelta, timezone
-from dataiku.customrecipe import *
-import dataiku
 import pandas as pd
 from exceptions import OpenWeatherMapAPIError
 from requests import HTTPError
 import pwd
 import constants
+import os
+
+
+logger = logging.getLogger(__name__)
 
 
 def floor_time(dt=None, round_to='day'):
@@ -36,16 +39,6 @@ def datetime_to_str(dt, formatter="%Y-%m-%d"):
 
 def str_to_datetime(date_str, formatter="%Y-%m-%d"):
     return datetime.strptime(date_str, formatter)
-
-
-def get_input_output():
-    if len(get_input_names_for_role('input_dataset')) == 0:
-        raise ValueError('No input dataset.')
-    input_dataset_name = get_input_names_for_role('input_dataset')[0]
-    input_dataset = dataiku.Dataset(input_dataset_name)
-    output_dataset_name = get_output_names_for_role('output_dataset')[0]
-    output_dataset = dataiku.Dataset(output_dataset_name)
-    return input_dataset, output_dataset
 
 
 def make_column_names_unique(df):
@@ -116,16 +109,23 @@ def requests_error_handler(function):
     return wrapper
 
 
+def log_txt(txt):
+    return txt.center(100, '#')
+
+
+def log_sep():
+    return log_txt('')
+
+
 def debug_func(function):
     def wrapper(*args, **kwargs):
         try:
             return function(*args, **kwargs)
         except Exception as err:
-            print('################################ LOCAL VARIABLES #################################################')
-            print(locals())
-            print('##################################################################################################')
+            logger.debug(log_txt('LOCAL VARIABLES'))
+            logger.debug(locals())
+            logger.debug(log_sep())
             raise err
-
     return wrapper
 
 
@@ -139,14 +139,18 @@ def cast_field(value, type_):
     if type_ == 'int':
         return int(value)
     if type_ == 'boolean':
-        return value in ['true', True, 'T', 1, 'Vrai', 'V']
+        return value in ['true', True, 'T', 1, 'Vrai', 'V', '1', 'True']
     return str(value)
 
 
 def dbg_msg(msg, title=""):
-    print(' DEBUG MESSAGE: {} '.format(title).center(100, '#'))
-    print(msg)
-    print(''.center(100, '#'))
+    logger.debug(log_txt(' DEBUG MESSAGE: {} '.format(title)))
+    logger.debug(msg)
+    logger.debug(log_sep())
+
+
+def info_msg(msg):
+    logger.info(log_txt(msg))
 
 
 def update_columns_descriptor(dataset, unit_system, lang):
@@ -158,3 +162,19 @@ def update_columns_descriptor(dataset, unit_system, lang):
             lang=constants.LANG_LABEL[lang]
         )
     dataset.write_schema(dataset_schema)
+
+
+def log_func(txt):
+    def inner(f):
+        def wrapper(*args, **kwargs):
+            info_msg('Starting {} ({})'.format(txt, datetime.now().strftime('%H:%M:%S')))
+            res = f(*args, **kwargs)
+            info_msg('Ending {} ({})'.format(txt, datetime.now().strftime('%H:%M:%S')))
+            return res
+        return wrapper
+    return inner
+
+
+class AttributeDict(dict):
+    __getattr__ = dict.__getitem__
+    __setattr__ = dict.__setitem__
