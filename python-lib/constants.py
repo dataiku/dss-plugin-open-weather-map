@@ -1,3 +1,17 @@
+from enum import Enum
+
+
+class DataType(Enum):
+    HISTORICAL = 'historical'
+    FORECAST = 'forecast'
+    ALL = 'all'
+
+
+class Granularity(Enum):
+    DAILY = 'daily'
+    HOURLY = 'hourly'
+
+
 COL_TYPES = {
     'all': {
         'dt': 'date',
@@ -130,3 +144,6 @@ CACHE_RELATIVE_DIR = '.cache/dss/plugins/open_weather_map'
 NB_DAYS_MAX_FORECAST = 7
 NB_HOURS_MAX_FORECAST = 47
 NB_DAYS_MAX_HISTORICAL = 5
+LOG_SEPARATOR_CHAR = '-'
+LOG_SEPARATOR_LEN = 20
+UNPARSED_COL_NAME = 'unparsed_weather'

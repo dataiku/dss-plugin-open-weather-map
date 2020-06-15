@@ -1,13 +1,13 @@
 {
     "id": "open-weather-map",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "meta": {
         "label": "OpenWeatherMap",
         "description": "Retrieve historical and forecast data from OpenWeatherMap API",
         "author": "Dataiku (Henri Chabert)",
         "icon": "icon-cloud",
-        "tags": ["Weather", "Geospatial"],
-        "url": "https://www.dataiku.com/dss/plugins/info/open-weather-map.html",
+        "tags": ["Enrichment", "Geospatial", "API"],
+        "url": "https://www.dataiku.com/product/plugins/openweathermap/",
         "licenseInfo": "Apache Software License"
     },
     "params": [
