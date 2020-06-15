@@ -1,4 +1,3 @@
-import logging
 from dataiku.customrecipe import (get_input_names_for_role, get_output_names_for_role,
                                   get_plugin_config, get_recipe_config)
 from dataiku import Dataset
@@ -6,8 +5,7 @@ from openweathermap_utils import OpenWeatherMapAPI, CacheHandler
 import openweathermap_utils.utils as utils
 from datetime import datetime
 import pandas as pd
-
-logger = logging.getLogger(__name__)
+import constants
 
 
 def load_cache_config(config):
@@ -101,7 +99,7 @@ def run():
             dt = row[loc_configs.date_column_name].to_pydatetime()
         lat, lon = row[loc_configs.latitude_column_name], row[loc_configs.longitude_column_name]
         output = owm_func(lat, lon, dt, **kwargs)
-        return output if parse_output else {'unparsed_weather': output}
+        return output if parse_output else {constants.UNPARSED_COL_NAME: output}
 
     config = load_config()
 

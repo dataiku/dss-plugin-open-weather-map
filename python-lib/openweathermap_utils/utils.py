@@ -110,7 +110,7 @@ def requests_error_handler(function):
 
 
 def log_sep():
-    return '\n{}\n'.format(''.center(20, '-'))
+    return '\n{}\n'.format(''.center(constants.LOG_SEPARATOR_LEN, constants.LOG_SEPARATOR_CHAR))
 
 
 def log_txt(txt):
