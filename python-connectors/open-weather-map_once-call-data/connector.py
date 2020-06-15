@@ -30,13 +30,16 @@ class OpenWeatherMapConnector(Connector):
         self.units = preset_config.get("units") if self.config.get("units") == 'default' else self.config.get("units")
         self.lang = preset_config.get("lang") if self.config.get("lang") == 'default' else self.config.get("lang")
         self.cache_enabled = self.config.get("cache_enabled") and self.cache_location
+        self.parse_output = self.config.get("parse_output", True)
 
         with CacheHandler(self.cache_location, enabled=self.cache_enabled,
                           size_limit=self.cache_size, eviction_policy=self.cache_policy) as cache:
             self.weather_api = OpenWeatherMapAPI(self.api_key, cache)
 
     def get_read_schema(self):
-        return self.weather_api.retrieve_schema(self.data_type, self.granularity)
+        if self.parse_output:
+            return self.weather_api.retrieve_schema(self.data_type, self.granularity)
+        return None
 
     def generate_rows(self, dataset_schema=None, dataset_partitioning=None,
                       partition_id=None, records_limit=-1):
@@ -45,6 +48,7 @@ class OpenWeatherMapConnector(Connector):
             lon=self.longitude,
             granularity=self.granularity,
             data_type=self.data_type,
+            parse_output=self.parse_output,
             units=self.units,
             lang=self.lang
         )

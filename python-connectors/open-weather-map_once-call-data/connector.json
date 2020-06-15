@@ -49,6 +49,12 @@
             "defaultValue" : false
         },
         {
+            "name": "sep1",
+            "label": "Advanced",
+            "type": "SEPARATOR",
+            "visibilityCondition" : "model.advanced_mode"
+        },
+        {
             "name": "data_type",
             "label": "Data type",
             "type": "SELECT",
@@ -85,11 +91,11 @@
                 },
                 {
                     "value": "metric",
-                    "label": "Metric (Temperature in Celsius, speed in meter/second), Pressure in hPa"
+                    "label": "Metric (Temperature in Celsius, speed in meter/second, Pressure in hPa)"
                 },
                 {
                     "value": "imperial",
-                    "label": "Imperial (Temperature in Fahrenheit, speed in mile/hour), Pressure in hPa"
+                    "label": "Imperial (Temperature in Fahrenheit, speed in mile/hour, Pressure in hPa)"
                 }
             ],
             "visibilityCondition" : "model.advanced_mode"
@@ -122,9 +128,16 @@
         {
             "name": "cache_enabled",
             "type": "BOOLEAN",
-            "label" : "Use cache",
+            "label" : "Use cache (If cache allowed in plugin settings)",
             "defaultValue": true,
             "visibilityCondition" : "model.advanced_mode && model.data_type != 'forecast'"
+        },
+        {
+            "name": "parse_output",
+            "type": "BOOLEAN",
+            "label" : "Parse output JSON",
+            "defaultValue": true,
+            "visibilityCondition" : "model.advanced_mode"
         }
     ]
 }

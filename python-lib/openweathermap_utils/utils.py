@@ -5,7 +5,7 @@ import pandas as pd
 from exceptions import OpenWeatherMapAPIError
 from requests import HTTPError
 import pwd
-from constants import CACHE_RELATIVE_DIR
+import constants
 
 
 def floor_time(dt=None, round_to='day'):
@@ -83,7 +83,7 @@ def get_cache_location_from_configs(cache_location, default):
     # the implementation of MUS instances where permission problems
     # could happen.
     if cache_location == 'original':
-        return os.path.join(home_dir, CACHE_RELATIVE_DIR)
+        return os.path.join(home_dir, constants.CACHE_RELATIVE_DIR)
     elif cache_location == 'none':
         return ''
     return default
@@ -143,7 +143,18 @@ def cast_field(value, type_):
     return str(value)
 
 
-def dbg_msg(msg):
-    print('######################################### DEBUG MESSAGE ##################################################')
+def dbg_msg(msg, title=""):
+    print(' DEBUG MESSAGE: {} '.format(title).center(100, '#'))
     print(msg)
-    print('##########################################################################################################')
+    print(''.center(100, '#'))
+
+
+def update_columns_descriptor(dataset, unit_system, lang):
+    dataset_schema = dataset.read_schema()
+    for col_info in dataset_schema:
+        col_name = '.'.join(list(filter(lambda x: not x.isdigit(), col_info.get('name').split('.'))))
+        col_info['comment'] = constants.COL_DESCRIPTORS.get(col_name, "").format(
+            unit_system=constants.UNITS_LABEL[unit_system],
+            lang=constants.LANG_LABEL[lang]
+        )
+    dataset.write_schema(dataset_schema)

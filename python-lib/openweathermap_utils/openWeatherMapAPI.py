@@ -3,10 +3,10 @@ import logging
 from itertools import chain
 import os
 from openweathermap_utils.utils import (datetime_to_timestamp, flatten_dict, cast_field, requests_error_handler,
-                                        floor_time, timestamp_to_datetime, datetime_to_str)
+                                        floor_time, timestamp_to_datetime, datetime_to_str, dbg_msg)
 from datetime import datetime, timedelta
 from exceptions import OpenWeatherMapAPIError
-from constants import COL_TYPES
+import constants
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +16,7 @@ class OpenWeatherMapAPI:
         self.api_key = api_key
         self.base_url = 'https://api.openweathermap.org/data/2.5/'
         self.datetime_schema = '%Y-%m-%d'
-        self.available_columns = COL_TYPES
+        self.available_columns = constants.COL_TYPES
         self.cache = cache
         self.api_calls_nb = 0
 
@@ -136,11 +136,17 @@ class OpenWeatherMapAPI:
                 historical_columns, **forecast_columns
             ))
         return dict(self.available_columns['all'], **dict(
-                self.available_columns[data_type]['all'], **self.available_columns[data_type][granularity]
+            self.available_columns[data_type]['all'], **self.available_columns[data_type][granularity]
         ))
 
     def _is_hourly_forecast_available(self, date):
-        return date < datetime.today() + timedelta(hours=47)
+        return date < datetime.today() + timedelta(hours=constants.NB_HOURS_MAX_FORECAST)
+
+    def _is_forecast_available(self, date):
+        return date < datetime.today() + timedelta(days=constants.NB_DAYS_MAX_FORECAST)
+
+    def _is_historical_available(self, date):
+        return date > datetime.today() - timedelta(days=constants.NB_DAYS_MAX_HISTORICAL)
 
     def _get_cache_key(self, **kwargs):
         return kwargs
@@ -148,8 +154,8 @@ class OpenWeatherMapAPI:
     def get_forecast_dt_weather_data(self, lat, lon, date, **kwargs):
         weather_data, error = self._get_forecast_weather_data(lat, lon, **kwargs)
         granularity = 'hourly' if self._is_hourly_forecast_available(date) else 'daily'
-        res, error2 = self._find_date_in_weather_list(weather_data.get(granularity), date, granularity, 'forecast')
-        return self._format_output(res[0], lat, lon, 'forecast', granularity, error.text if error else error2.text)
+        res, error2 = self._find_date_in_weather_list(weather_data.get(granularity, {}), date, granularity, 'forecast')
+        return self._format_output(res[0], lat, lon, 'forecast', granularity, error.text if error.text else error2.text)
 
     def get_historical_dt_weather_data(self, lat, lon, date, **kwargs):
         weather_data, error = self._get_historical_weather_data(lat, lon, date, 'daily', **kwargs)
@@ -160,11 +166,13 @@ class OpenWeatherMapAPI:
             return self.get_historical_dt_weather_data(lat, lon, date, **kwargs)
         return self.get_forecast_dt_weather_data(lat, lon, date, **kwargs)
 
-    def get_forecast_weather_data_gen(self, lat, lon, granularity, **kwargs):
+    def get_forecast_weather_data_gen(self, lat, lon, granularity, parse_output=True, **kwargs):
         weather_data, error = self._get_forecast_weather_data(lat, lon, granularity, **kwargs)
-        return (self._format_output(d, lat, lon, 'forecast', granularity, error.text) for d in weather_data)
+        for d in weather_data:
+            weather_output = self._format_output(d, lat, lon, 'forecast', granularity, error.text)
+            yield weather_output if parse_output else {'unparsed_weather': weather_output}
 
-    def get_historical_weather_data_gen(self, lat, lon, granularity, limit_days=5, **kwargs):
+    def get_historical_weather_data_gen(self, lat, lon, granularity, limit_days=5, parse_output=True, **kwargs):
         today = floor_time(datetime.today(), 'day').replace(hour=12)
         days_before = 1
         while days_before <= limit_days:
@@ -172,7 +180,8 @@ class OpenWeatherMapAPI:
             weather_data, error = self._get_historical_weather_data(lat, lon, date, granularity, **kwargs)
             if error.status_code == 400: break
             for d in weather_data:
-                yield self._format_output(d, lat, lon, 'historical', granularity, error.text)
+                weather_output = self._format_output(d, lat, lon, 'historical', granularity, error.text)
+                yield weather_output if parse_output else {'unparsed_weather': weather_output}
             days_before += 1
 
     def get_weather_data_gen(self, lat, lon, granularity, data_type, **kwargs):
@@ -184,4 +193,5 @@ class OpenWeatherMapAPI:
         return chain(*gens)
 
     def retrieve_schema(self, data_type, granularity):
-        return {'columns': [{'name': k, 'type': v} for k, v in self._retrieve_columns_type(data_type, granularity).items()]}
+        return {
+            'columns': [{'name': k, 'type': v} for k, v in self._retrieve_columns_type(data_type, granularity).items()]}

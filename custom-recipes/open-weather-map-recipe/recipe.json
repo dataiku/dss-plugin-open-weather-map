@@ -48,18 +48,41 @@
             "mandatory": true
         },
         {
+            "name": "date_mode",
+            "label": "Date",
+            "type": "SELECT",
+            "defaultValue": "current",
+            "selectChoices": [
+                {
+                    "value": "current",
+                    "label": "Current"
+                },
+                {
+                    "value": "custom",
+                    "label": "Choose a date column"
+                }
+            ]
+        },
+        {
             "name": "date_column",
             "label": "Date column",
             "type": "COLUMN",
             "columnRole": "input_dataset",
             "allowedColumnTypes": ["date"],
-            "mandatory": true
+            "mandatory": true,
+            "visibilityCondition" : "model.date_mode == 'custom'"
         },
         {
             "name": "advanced_mode",
             "type": "BOOLEAN",
             "label" : "Advanced mode",
             "defaultValue" : false
+        },
+        {
+        "name": "sep1",
+        "label": "Advanced",
+        "type": "SEPARATOR",
+        "visibilityCondition" : "model.advanced_mode"
         },
         {
             "name": "units",
@@ -77,11 +100,11 @@
                 },
                 {
                     "value": "metric",
-                    "label": "Metric (Temperature in Celsius, speed in meter/second), Pressure in hPa"
+                    "label": "Metric (Temperature in Celsius, speed in meter/second, Pressure in hPa)"
                 },
                 {
                     "value": "imperial",
-                    "label": "Imperial (Temperature in Fahrenheit, speed in mile/hour), Pressure in hPa"
+                    "label": "Imperial (Temperature in Fahrenheit, speed in mile/hour, Pressure in hPa)"
                 }
             ],
             "visibilityCondition" : "model.advanced_mode"
@@ -112,9 +135,16 @@
             "visibilityCondition" : "model.advanced_mode"
         },
         {
-            "name": "cache_enabled (If cache allowed in plugin settings)",
+            "name": "cache_enabled",
             "type": "BOOLEAN",
-            "label" : "Use cache",
+            "label" : "Use cache (If cache allowed in plugin settings)",
+            "defaultValue": true,
+            "visibilityCondition" : "model.advanced_mode"
+        },
+        {
+            "name": "parse_output",
+            "type": "BOOLEAN",
+            "label" : "Parse output JSON",
             "defaultValue": true,
             "visibilityCondition" : "model.advanced_mode"
         }
