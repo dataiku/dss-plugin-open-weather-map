@@ -14,7 +14,8 @@ logger = logging.getLogger(__name__)
 class OpenWeatherMapAPI:
     def __init__(self, api_key, cache):
         self.api_key = api_key
-        self.base_url = 'https://api.openweathermap.org/data/2.5/'
+        self.api_version = '2.5'
+        self.base_url = f'https://api.openweathermap.org/data/{self.api_version}/'
         self.datetime_schema = '%Y-%m-%d'
         self.available_columns = constants.COL_TYPES
         self.cache = cache
