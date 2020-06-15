@@ -109,12 +109,16 @@ def requests_error_handler(function):
     return wrapper
 
 
-def log_txt(txt):
-    return txt.center(100, '#')
-
-
 def log_sep():
-    return log_txt('')
+    return '\n{}\n'.format(''.center(20, '-'))
+
+
+def log_txt(txt):
+    output_txt = '\n'
+    output_txt += log_sep()
+    output_txt += txt
+    output_txt += log_sep()
+    return output_txt
 
 
 def debug_func(function):
