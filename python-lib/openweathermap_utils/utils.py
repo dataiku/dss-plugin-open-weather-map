@@ -121,18 +121,6 @@ def log_txt(txt):
     return output_txt
 
 
-def debug_func(function):
-    def wrapper(*args, **kwargs):
-        try:
-            return function(*args, **kwargs)
-        except Exception as err:
-            logger.debug(log_txt("LOCAL VARIABLES"))
-            logger.debug(locals())
-            logger.debug(log_sep())
-            raise err
-    return wrapper
-
-
 def cast_field(value, type_):
     if not value:
         return value
@@ -145,12 +133,6 @@ def cast_field(value, type_):
     if type_ == "boolean":
         return value in ["true", True, "T", 1, "Vrai", "V", "1", "True"]
     return str(value)
-
-
-def dbg_msg(msg, title=""):
-    logger.debug(log_txt(" DEBUG MESSAGE: {} ".format(title)))
-    logger.debug(msg)
-    logger.debug(log_sep())
 
 
 def info_msg(msg):

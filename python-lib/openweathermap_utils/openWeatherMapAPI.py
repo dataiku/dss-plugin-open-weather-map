@@ -23,7 +23,7 @@ class OpenWeatherMapAPI:
 
     def _get_query(self, endpoint, params):
         """
-        Realises an HTTP GET query on the endpoint using Requests library.
+        Performs an HTTP GET query on the endpoint using Requests library.
         :param endpoint: Endpoint to query
         :param params: Querystring parameters
         :return: Response body as a dict if successful else raise an exception
