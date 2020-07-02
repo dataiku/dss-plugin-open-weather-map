@@ -64,6 +64,26 @@ def flatten_dict_rec(el, names, new_dict):
 
 
 def flatten_dict(d):
+    """
+    Runs recursive function flatten_dict_rec() to decrease the number of parameters. This recursive function
+    flatten a dict. Nested keys are separated by a "." and elements of list are represented by their index.
+    For example:
+    {
+        "key1": "val1",
+        "key2": {
+            "key3":"val2",
+            "key4":["val3", "val4"]
+        }
+    } is flatten into:
+    {
+        "key1": "val1",
+        "key2.key3": "val2",
+        "key2.key4.0": "val3",
+        "key2.key4.1": "val4",
+    }
+    :param d: Dict to flatten
+    :return: Flattened dict
+    """
     new_dict = {}
     flatten_dict_rec(d, [], new_dict)
     return new_dict
