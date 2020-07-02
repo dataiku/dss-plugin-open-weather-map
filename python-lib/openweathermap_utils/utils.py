@@ -86,7 +86,7 @@ def requests_error_handler(function):
     """
     Raises an exception or ignore it according to the type of error.
     :param function: Function decorated
-    :return: (data, error) if error ignore else raises an Exception. If there is no error, the second argument is empty
+    :return: (data, error) if error ignored else raises an Exception. If there is no error, the second argument is empty
     """
     def wrapper(*args, **kwargs):
         try:
@@ -100,7 +100,7 @@ def requests_error_handler(function):
                 status_code=int(http_error.response.status_code),
                 text=http_error.response.text
             )
-            if owm_error.status_code == 401:
+            if owm_error.status_code in [401, 403]:
                 raise owm_error
             return [{}], owm_error
         except Exception as err:
