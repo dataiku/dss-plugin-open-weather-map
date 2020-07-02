@@ -11,24 +11,24 @@ class OpenWeatherMapConnector(Connector):
         preset_config = self.config.get("preset_config")
 
         self.cache_location = get_cache_location_from_configs(
-            cache_location=self.plugin_config.get('cache_location'),
-            default=self.plugin_config.get('cache_location_custom', '')
+            cache_location=self.plugin_config.get("cache_location"),
+            default=self.plugin_config.get("cache_location_custom", "")
         )
 
-        self.cache_size = self.plugin_config.get('cache_size', 1000) * 1000
+        self.cache_size = self.plugin_config.get("cache_size", 1000) * 1000
         self.cache_policy = str(self.plugin_config.get("cache_policy"))
 
         self.api_key = str(preset_config.get("api_key"))
 
-        if self.api_key == 'None':
+        if self.api_key == "None":
             raise ValueError("An OpenWeatherMap API key in mandatory to use the plugin. Please set one in a preset.")
         self.latitude = str(self.config.get("latitude"))
         self.longitude = str(self.config.get("longitude"))
         self.granularity = str(self.config.get("granularity"))
 
         self.data_type = str(self.config.get("data_type"))
-        self.units = preset_config.get("units") if self.config.get("units") == 'default' else self.config.get("units")
-        self.lang = preset_config.get("lang") if self.config.get("lang") == 'default' else self.config.get("lang")
+        self.units = preset_config.get("units") if self.config.get("units") == "default" else self.config.get("units")
+        self.lang = preset_config.get("lang") if self.config.get("lang") == "default" else self.config.get("lang")
         self.cache_enabled = self.config.get("cache_enabled") and self.cache_location
         self.parse_output = self.config.get("parse_output", True)
 

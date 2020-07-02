@@ -3,7 +3,7 @@ from diskcache import Cache
 
 class CacheHandler(Cache):
     def __init__(self, *args, **kwargs):
-        self._enabled = kwargs.get('enabled', True)
+        self._enabled = kwargs.get("enabled", True)
 
         if self._enabled:
             super(CacheHandler, self).__init__(*args, **kwargs)
