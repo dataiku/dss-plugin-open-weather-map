@@ -1,0 +1,81 @@
+{
+    "id": "open-weather-map",
+    "version": "0.1.0",
+    "meta": {
+        "label": "OpenWeatherMap",
+        "description": "Retrieve historical and forecast data from OpenWeatherMap API",
+        "author": "Dataiku (Henri Chabert)",
+        "icon": "icon-cloud",
+        "tags": ["Enrichment", "Geospatial", "API"],
+        "url": "https://www.dataiku.com/product/plugins/openweathermap/",
+        "licenseInfo": "Apache Software License"
+    },
+    "params": [
+        {
+            "name": "cache_location",
+            "type": "SELECT",
+            "label": "Cache location",
+            "selectChoices": [
+            {
+                "value": "original",
+                "label": "User $HOME directory"
+            },
+            {
+                "value": "custom",
+                "label": "Custom"
+            },
+            {
+                "value": "none",
+                "label": "None"
+            }
+            ],
+            "defaultValue": "original"
+        },
+        {
+            "name": "cache_location_custom",
+            "type": "STRING",
+            "label": "Custom cache location",
+            "description": "Absolute path",
+            "visibilityCondition": "model.cache_location == 'custom'"
+        },
+        {
+            "name": "sep_fw",
+            "type": "SEPARATOR",
+            "label": "OpenWeatherMap Cache",
+            "visibilityCondition": "model.cache_location != 'none'"
+        },
+        {
+            "name": "cache_size",
+            "type": "INT",
+            "label": "Cache size",
+            "description": "in megabytes",
+            "defaultValue": 1000,
+                "visibilityCondition": "model.cache_location != 'none'"
+        },
+        {
+            "name": "cache_policy",
+            "label": "Eviction policy",
+            "description": "The way you want data to be evicted once the cache size is reached",
+            "type": "SELECT",
+            "selectChoices": [
+            {
+                "value": "least-recently-stored",
+                "label": "Least Recently Stored"
+            },
+            {
+                "value": "least-recently-used",
+                "label": "Least Recently Used"
+            },
+            {
+                "value": "least-frequently-used",
+                "label": "Least Frequently Used"
+            },
+            {
+                "value": "none",
+                "label": "No Eviction"
+            }],
+            "defaultValue": "least-recently-stored",
+            "visibilityCondition": "model.cache_location != 'none'"
+        }
+    ]
+}
