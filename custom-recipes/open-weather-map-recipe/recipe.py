@@ -11,56 +11,56 @@ import constants
 def load_cache_config(config):
     plugin_config = get_plugin_config()
     recipe_config = get_recipe_config()
-
+    
     config.cache_location = utils.get_cache_location_from_configs(
-        cache_location=plugin_config.get('cache_location'),
-        default=plugin_config.get('cache_location_custom', '')
+        cache_location=plugin_config.get("cache_location"),
+        default=plugin_config.get("cache_location_custom", "")
     )
 
-    config.cache_size = plugin_config.get('cache_size', 1000) * 1000
-    config.cache_policy = plugin_config.get('cache_policy', 'least-recently-stored')
-    config.cache_enabled = recipe_config.get('cache_enabled') and config.cache_location
+    config.cache_size = plugin_config.get("cache_size", 1000) * 1000
+    config.cache_policy = plugin_config.get("cache_policy", "least-recently-stored")
+    config.cache_enabled = recipe_config.get("cache_enabled") and config.cache_location
 
 
 def load_recipe_config(config):
     recipe_config = get_recipe_config()
-    preset_config = recipe_config.get('preset_config')
+    preset_config = recipe_config.get("preset_config")
 
-    config.latitude_column_name = recipe_config.get('latitude_column')
-    config.longitude_column_name = recipe_config.get('longitude_column')
+    config.latitude_column_name = recipe_config.get("latitude_column")
+    config.longitude_column_name = recipe_config.get("longitude_column")
 
-    config.date_mode = recipe_config.get('date_mode')
-    if config.date_mode == 'current':
+    config.date_mode = recipe_config.get("date_mode")
+    if config.date_mode == "current":
         config.date = datetime.now()
-    config.date_column_name = recipe_config.get('date_column', None)
+    config.date_column_name = recipe_config.get("date_column", None)
 
-    config.units = preset_config.get('units') if recipe_config.get('units') == 'default' else recipe_config.get('units')
-    config.lang = preset_config.get('lang') if recipe_config.get("lang") == 'default' else recipe_config.get('lang')
+    config.units = preset_config.get("units") if recipe_config.get("units") == "default" else recipe_config.get("units")
+    config.lang = preset_config.get("lang") if recipe_config.get("lang") == "default" else recipe_config.get("lang")
 
-    config.parse_output = recipe_config.get('parse_output', True)
+    config.parse_output = recipe_config.get("parse_output", True)
 
 
 def load_api_key(config):
     recipe_config = get_recipe_config()
-    preset_config = recipe_config.get('preset_config')
+    preset_config = recipe_config.get("preset_config")
 
-    config.api_key = preset_config.get('api_key')
+    config.api_key = preset_config.get("api_key")
 
     if not config.api_key:
         raise ValueError("An OpenWeatherMap API key in mandatory to use the plugin. Please set one in a preset.")
 
 
 def load_input_output(config):
-    if not get_input_names_for_role('input_dataset'):
-        raise ValueError('No input dataset.')
-    input_dataset_name = get_input_names_for_role('input_dataset')[0]
+    if not get_input_names_for_role("input_dataset"):
+        raise ValueError("No input dataset.")
+    input_dataset_name = get_input_names_for_role("input_dataset")[0]
     config.input_dataset = Dataset(input_dataset_name)
 
-    output_dataset_name = get_output_names_for_role('output_dataset')[0]
+    output_dataset_name = get_output_names_for_role("output_dataset")[0]
     config.output_dataset = Dataset(output_dataset_name)
 
 
-@utils.log_func(txt='config retrieval')
+@utils.log_func(txt="config retrieval")
 def load_config():
     config = utils.AttributeDict()
 
@@ -72,7 +72,7 @@ def load_config():
     return config
 
 
-@utils.log_func(txt='data recuperation')
+@utils.log_func(txt="data recuperation")
 def build_output_df(open_weather_map_API, config, row_processor):
     input_df = config.input_dataset.get_dataframe()
     weather_df = pd.DataFrame(list(input_df.apply(
@@ -86,14 +86,14 @@ def build_output_df(open_weather_map_API, config, row_processor):
     )))
     output_df = pd.concat([input_df, weather_df], axis=1)
     utils.make_column_names_unique(output_df)
-    utils.info_msg(f'API calls #: {open_weather_map_API.api_calls_nb}')
+    utils.info_msg(f"API calls #: {open_weather_map_API.api_calls_nb}")
     return output_df
 
 
-@utils.log_func(txt='OpenWeatherMap recipe')
+@utils.log_func(txt="OpenWeatherMap recipe")
 def run():
     def process_row(row, loc_configs, owm_func, parse_output=True, **kwargs):
-        if loc_configs.date_mode == 'current':
+        if loc_configs.date_mode == "current":
             dt = loc_configs.date
         else:
             dt = row[loc_configs.date_column_name].to_pydatetime()
