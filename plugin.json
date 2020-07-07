@@ -1,6 +1,6 @@
 {
     "id": "open-weather-map",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "meta": {
         "label": "OpenWeatherMap",
         "description": "Retrieve historical and forecast data from OpenWeatherMap API",
