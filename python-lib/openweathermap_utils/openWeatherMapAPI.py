@@ -194,7 +194,7 @@ class OpenWeatherMapAPI:
         gens = []
         if data_type in (DataType.HISTORICAL.value, DataType.ALL.value):
             gens.append(self.get_historical_weather_data_gen(lat, lon, granularity, **kwargs))
-        if data_type in (DataType.FORECAST.value.value, DataType.ALL.value):
+        if data_type in (DataType.FORECAST.value, DataType.ALL.value):
             gens.append(self.get_forecast_weather_data_gen(lat, lon, granularity, **kwargs))
         return chain(*gens)
 
