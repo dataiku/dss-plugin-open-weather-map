@@ -6,10 +6,12 @@
     "description": "Retrieve historical and forecast data from OpenWeatherMap API",
     "author": "Dataiku (Henri Chabert)",
     "icon": "icon-cloud",
+    "category": "Geospatial",
     "tags": [
       "Enrichment",
+      "Open Data",
       "Geospatial",
-      "API"
+      "Data Preparation"
     ],
     "url": "https://www.dataiku.com/product/plugins/openweathermap/",
     "licenseInfo": "Apache Software License"

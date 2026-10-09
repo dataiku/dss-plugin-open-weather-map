@@ -2,6 +2,7 @@
 
 - Added supported Python versions: 3.13, 3.14
 - Makefile cleanup: release_info.json lines removed
+- Updates category and tags
 
 ## [Version 1.1.0](https://github.com/dataiku/dss-plugin-open-weather-map/releases/tag/v1.1.0) - Feature release - 2025-04-17
 
